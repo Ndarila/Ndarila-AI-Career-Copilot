@@ -40,82 +40,29 @@ app = FastAPI(
 # 🤖 NdarilaAI Career Copilot API
 
 AI-powered career acceleration platform.
-
-## 🔐 Authentication
-- User registration
-- JWT login
-- Secure sessions
-- Protected user routes
-
-## 🤖 Career Copilot
-- AI career advice
-- Career planning
-- Professional guidance
-- Learning recommendations
-
-## 📄 Resume Analyzer
-- CV upload
-- ATS scoring
-- Resume strengths
-- Resume weaknesses
-- Missing keywords
-- Resume improvements
-
-## 🎯 Job Matcher
-- Resume matching
-- Job description analysis
-- Compatibility score
-- Skills gap analysis
-- ATS keyword matching
-
-## 🎤 Interview Coach
-- AI mock interviews
-- Technical interview questions
-- HR interview preparation
-- Answer evaluation
-- Feedback scoring
-
-## 🗺️ Career Roadmap
-- Personalized learning paths
-- Skill recommendations
-- Certifications
-- Career milestones
-
-## 📊 Dashboard Analytics
-- Career score
-- AI sessions tracking
-- Job match tracking
-- User activity overview
-
-Built with:
-- FastAPI
-- SQLAlchemy
-- SQLite/PostgreSQL
-- OpenRouter AI
-- JWT Authentication
-"""
+""",
 )
 
 # ==================================================
 # CORS Configuration
 # ==================================================
 
-origins = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "https://ndarila-ai-career-copilot.vercel.app",
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "https://ndarila-ai-career-copilot.vercel.app",
+        "https://www.ndarila-ai-career-copilot.vercel.app",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+    expose_headers=["*"],
 )
 
 # ==================================================
-# Register API Routers
+# Register Routers
 # ==================================================
 
 app.include_router(auth.router)
@@ -128,7 +75,7 @@ app.include_router(roadmap.router)
 app.include_router(dashboard.router)
 
 # ==================================================
-# Home / Health Check
+# Home
 # ==================================================
 
 @app.get("/", tags=["Home"])
@@ -140,27 +87,4 @@ async def home():
         "database": "connected",
         "authentication": "JWT Enabled",
         "ai_provider": "OpenRouter AI",
-        "modules": {
-            "authentication": True,
-            "career_copilot": True,
-            "resume_analyzer": True,
-            "job_matcher": True,
-            "interview_coach": True,
-            "career_roadmap": True,
-            "dashboard": True,
-        },
-        "routes": {
-            "authentication": "/api/auth",
-            "career_ai": "/api/ai/career",
-            "resume_analyzer": "/api/resume/analyze",
-            "job_matcher": "/api/job-matcher/match",
-            "interview_coach": "/api/interview/review",
-            "career_roadmap": "/api/roadmap/generate",
-            "dashboard": "/api/dashboard/stats",
-        },
-        "documentation": {
-            "swagger": "/docs",
-            "redoc": "/redoc",
-            "openapi": "/openapi.json",
-        },
     }

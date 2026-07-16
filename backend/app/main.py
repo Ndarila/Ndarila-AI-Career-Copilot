@@ -40,29 +40,50 @@ app = FastAPI(
 # 🤖 NdarilaAI Career Copilot API
 
 AI-powered career acceleration platform.
+
+Features:
+- JWT Authentication
+- AI Career Copilot
+- Resume Analyzer
+- Job Matcher
+- Interview Coach
+- Career Roadmap
+- Dashboard Analytics
+
+Built with:
+- FastAPI
+- SQLAlchemy
+- OpenRouter AI
 """,
 )
 
 # ==================================================
-# CORS Configuration
+# CORS Configuration (Production + Vercel + Fly.io)
 # ==================================================
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:3000",
-        "http://127.0.0.1:3000",
-        "https://ndarila-ai-career-copilot.vercel.app",
-        "https://www.ndarila-ai-career-copilot.vercel.app",
-    ],
+
+    # Allow frontend applications
+    allow_origin_regex=(
+        r"https?://.*"
+    ),
+
+    # Allow cookies / authorization headers
     allow_credentials=True,
+
+    # Allow all HTTP methods
     allow_methods=["*"],
+
+    # Allow all request headers
     allow_headers=["*"],
+
+    # Expose response headers
     expose_headers=["*"],
 )
 
 # ==================================================
-# Register Routers
+# Register API Routers
 # ==================================================
 
 app.include_router(auth.router)
@@ -75,7 +96,7 @@ app.include_router(roadmap.router)
 app.include_router(dashboard.router)
 
 # ==================================================
-# Home
+# Health Check
 # ==================================================
 
 @app.get("/", tags=["Home"])
@@ -87,4 +108,13 @@ async def home():
         "database": "connected",
         "authentication": "JWT Enabled",
         "ai_provider": "OpenRouter AI",
+        "modules": {
+            "authentication": True,
+            "career_copilot": True,
+            "resume_analyzer": True,
+            "job_matcher": True,
+            "interview_coach": True,
+            "career_roadmap": True,
+            "dashboard": True,
+        },
     }

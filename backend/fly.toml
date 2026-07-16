@@ -1,22 +1,19 @@
-# fly.toml app configuration file generated for backend-ambergris-horizon-7627 on 2026-07-12T15:58:20+03:00
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
+# Fly.io configuration for NdarilaAI Career Copilot Backend
 
-app = 'backend-ambergris-horizon-7627'
-primary_region = 'jnb'
+app = "backend-ambergris-horizon-7627"
 
-[build]
+primary_region = "jnb"
+
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = 'stop'
+  auto_stop_machines = "stop"
   auto_start_machines = true
-  min_machines_running = 0
-  processes = ['app']
+  min_machines_running = 1
+  processes = ["app"]
 
 [[vm]]
-  memory = '1gb'
-  cpu_kind = 'shared'
+  memory = "1gb"
+  cpu_kind = "shared"
   cpus = 1
   memory_mb = 1024

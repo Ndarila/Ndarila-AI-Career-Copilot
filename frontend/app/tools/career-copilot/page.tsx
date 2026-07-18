@@ -1,4 +1,3 @@
-```tsx
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -6,7 +5,6 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
 import ProtectedPage from "@/app/components/ProtectedPage";
-import { useAuth } from "@/app/providers/AuthProvider";
 import { careerAI } from "@/lib/api";
 
 
@@ -26,7 +24,8 @@ const suggestedPrompts = [
 
 export default function CareerCopilotPage() {
 
-  const { token } = useAuth();
+  useAuth();
+
 
   const [question, setQuestion] = useState("");
 
@@ -49,20 +48,19 @@ export default function CareerCopilotPage() {
 
 
 
-
   async function askAI() {
 
-    if (!question.trim()) return;
+    if (!question.trim() || loading) return;
 
 
     const userQuestion = question;
 
 
-    setMessages((prev)=>[
+    setMessages((prev) => [
       ...prev,
       {
-        role:"user",
-        content:userQuestion,
+        role: "user",
+        content: userQuestion,
       },
     ]);
 
@@ -79,18 +77,17 @@ export default function CareerCopilotPage() {
       const data = await careerAI(userQuestion);
 
 
-
-      setMessages((prev)=>[
+      setMessages((prev) => [
         ...prev,
         {
-          role:"assistant",
-          content:data.response,
+          role: "assistant",
+          content: data.response,
         },
       ]);
 
 
 
-    } catch(error) {
+    } catch (error) {
 
 
       console.error(
@@ -99,12 +96,12 @@ export default function CareerCopilotPage() {
       );
 
 
-      setMessages((prev)=>[
+      setMessages((prev) => [
         ...prev,
         {
-          role:"assistant",
+          role: "assistant",
           content:
-          "❌ Unable to contact the AI service.",
+            "❌ Unable to contact the AI service.",
         },
       ]);
 
@@ -161,7 +158,6 @@ export default function CareerCopilotPage() {
               resumes and professional growth.
             </p>
 
-
           </div>
 
 
@@ -175,11 +171,11 @@ export default function CareerCopilotPage() {
             gap-3
           ">
 
-            {suggestedPrompts.map((prompt)=>(
+            {suggestedPrompts.map((prompt) => (
 
               <button
                 key={prompt}
-                onClick={()=>setQuestion(prompt)}
+                onClick={() => setQuestion(prompt)}
                 className="
                   rounded-full
                   border
@@ -204,7 +200,6 @@ export default function CareerCopilotPage() {
 
 
 
-
           <div className="
             mb-6
             space-y-6
@@ -216,7 +211,7 @@ export default function CareerCopilotPage() {
           ">
 
 
-            {messages.length===0 && (
+            {messages.length === 0 && (
 
               <div className="
                 py-20
@@ -232,24 +227,24 @@ export default function CareerCopilotPage() {
 
 
 
-            {messages.map((message,index)=>(
 
+            {messages.map((message, index) => (
 
               <div
                 key={index}
                 className={`flex ${
-                  message.role==="user"
-                  ?"justify-end"
-                  :"justify-start"
+                  message.role === "user"
+                    ? "justify-end"
+                    : "justify-start"
                 }`}
               >
 
 
                 <div
                   className={`max-w-3xl rounded-2xl p-5 ${
-                    message.role==="user"
-                    ?"bg-cyan-600"
-                    :"border border-slate-700 bg-slate-900"
+                    message.role === "user"
+                      ? "bg-cyan-600"
+                      : "border border-slate-700 bg-slate-900"
                   }`}
                 >
 
@@ -257,16 +252,17 @@ export default function CareerCopilotPage() {
                   <ReactMarkdown
                     remarkPlugins={[remarkGfm]}
                   >
+
                     {message.content}
+
                   </ReactMarkdown>
 
 
 
-                  {message.role==="assistant" && (
+                  {message.role === "assistant" && (
 
                     <button
-
-                      onClick={()=>
+                      onClick={() =>
                         navigator.clipboard.writeText(
                           message.content
                         )
@@ -290,7 +286,6 @@ export default function CareerCopilotPage() {
 
 
               </div>
-
 
             ))}
 
@@ -320,19 +315,19 @@ export default function CareerCopilotPage() {
 
                   </span>
 
-
                 </div>
-
 
               </div>
 
             )}
 
 
+
             <div ref={bottomRef}/>
 
 
           </div>
+
 
 
 
@@ -351,18 +346,17 @@ export default function CareerCopilotPage() {
 
               value={question}
 
-              onChange={(e)=>
+              onChange={(e) =>
                 setQuestion(e.target.value)
               }
 
 
-              onKeyDown={(e)=>{
+              onKeyDown={(e) => {
 
-                if(
-                  e.key==="Enter"
-                  &&
+                if (
+                  e.key === "Enter" &&
                   !e.shiftKey
-                ){
+                ) {
 
                   e.preventDefault();
 
@@ -389,6 +383,7 @@ export default function CareerCopilotPage() {
               "
 
             />
+
 
 
 
@@ -423,6 +418,7 @@ export default function CareerCopilotPage() {
                   : "Ask AI"
                 }
 
+
               </button>
 
 
@@ -444,4 +440,3 @@ export default function CareerCopilotPage() {
   );
 
 }
-```

@@ -12,13 +12,9 @@ import { jwtDecode } from "jwt-decode";
 
 
 interface User {
-
   email: string;
-
   username?: string;
-
 }
-
 
 
 interface AuthContextType {
@@ -29,28 +25,28 @@ interface AuthContextType {
 
   loading: boolean;
 
-  loginUser: (
-    token: string,
-    user?: User
-  ) => void;
+  loginUser(
+    token:string,
+    user?:User
+  ):void;
 
-  logout: () => void;
+  logout():void;
 
 }
 
 
 
 const AuthContext =
-createContext<AuthContextType | null>(null);
+createContext<AuthContextType | undefined>(undefined);
 
 
 
 
 
 export function AuthProvider({
-  children
+  children,
 }:{
-  children: ReactNode;
+  children:ReactNode;
 }) {
 
 
@@ -72,76 +68,74 @@ export function AuthProvider({
   useEffect(()=>{
 
 
-    const savedToken =
+    const storedToken =
     localStorage.getItem("token");
 
 
-    const savedUser =
+    const storedUser =
     localStorage.getItem("user");
 
 
 
-    if(savedToken){
-
-      try{
+    if(storedToken){
 
 
-        setToken(savedToken);
+      try {
+
+
+        setToken(storedToken);
 
 
 
-        if(savedUser){
+        if(storedUser){
 
 
           setUser(
-            JSON.parse(savedUser)
+            JSON.parse(storedUser)
+          );
+
+
+        } else {
+
+
+          const decoded:any =
+          jwtDecode(storedToken);
+
+
+
+          const userData:User = {
+
+            email: decoded.sub,
+
+            username: decoded.username,
+
+          };
+
+
+
+          setUser(userData);
+
+
+          localStorage.setItem(
+            "user",
+            JSON.stringify(userData)
           );
 
 
         }
 
-        else {
 
 
-          const decoded:any =
-          jwtDecode(savedToken);
-
-
-
-          setUser({
-
-            email:
-            decoded.sub,
-
-            username:
-            decoded.username
-
-          });
-
-
-        }
-
-
-
-      }
-
-      catch(error){
+      } catch(error){
 
 
         console.error(
-          "Invalid token",
+          "Token error",
           error
         );
 
 
-        localStorage.removeItem(
-          "token"
-        );
-
-
-        localStorage.removeItem(
-          "user"
-        );
+        logout();
 
 
       }
@@ -163,7 +157,6 @@ export function AuthProvider({
 
 
 
-
   function loginUser(
     newToken:string,
     userData?:User
@@ -176,11 +169,7 @@ export function AuthProvider({
     );
 
 
-
-    setToken(
-      newToken
-    );
-
+    setToken(newToken);
 
 
 
@@ -193,15 +182,11 @@ export function AuthProvider({
       );
 
 
-
-      setUser(
-        userData
-      );
+      setUser(userData);
 
 
-    }
 
-    else {
+    } else {
 
 
       const decoded:any =
@@ -209,16 +194,13 @@ export function AuthProvider({
 
 
 
-      const userFromToken = {
+      const userFromToken:User = {
 
-        email:
-        decoded.sub,
+        email:decoded.sub,
 
-        username:
-        decoded.username
+        username:decoded.username,
 
       };
-
 
 
       localStorage.setItem(
@@ -227,10 +209,7 @@ export function AuthProvider({
       );
 
 
-
-      setUser(
-        userFromToken
-      );
+      setUser(userFromToken);
 
 
     }
@@ -244,21 +223,16 @@ export function AuthProvider({
 
 
 
+
   function logout(){
 
 
-    localStorage.removeItem(
-      "token"
-    );
+    localStorage.removeItem("token");
 
-
-    localStorage.removeItem(
-      "user"
-    );
+    localStorage.removeItem("user");
 
 
     setToken(null);
-
 
     setUser(null);
 
@@ -276,17 +250,11 @@ export function AuthProvider({
     <AuthContext.Provider
 
       value={{
-
         user,
-
         token,
-
         loading,
-
         loginUser,
-
-        logout
-
+        logout,
       }}
 
     >
@@ -294,7 +262,6 @@ export function AuthProvider({
       {children}
 
     </AuthContext.Provider>
-
 
   );
 
@@ -318,11 +285,10 @@ export function useAuth(){
   if(!context){
 
     throw new Error(
-      "useAuth must be inside AuthProvider"
+      "useAuth must be used inside AuthProvider"
     );
 
   }
-
 
 
   return context;

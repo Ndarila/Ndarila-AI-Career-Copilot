@@ -1,6 +1,6 @@
 const API =
   process.env.NEXT_PUBLIC_API_URL ||
-  "https://backend-ambergris-horizon-7627.fly.dev";
+  "https://ndarila-ai-career-copilot.onrender.com";
 
 // ----------------------
 // Authentication

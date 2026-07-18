@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { register } from "@/lib/api";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -13,7 +14,6 @@ export default function RegisterPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
-
   async function handleRegister(e: React.FormEvent) {
     e.preventDefault();
 
@@ -21,85 +21,32 @@ export default function RegisterPage() {
     setMessage("");
 
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/auth/register",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+      await register(username, email, password);
 
-          body: JSON.stringify({
-            username,
-            email,
-            password,
-          }),
-        }
-      );
-
-
-      const data = await response.json();
-
-
-      if (!response.ok) {
-
-        let errorMessage = "Registration failed";
-
-
-        if (Array.isArray(data.detail)) {
-          errorMessage = data.detail[0]?.msg || errorMessage;
-
-        } else if (typeof data.detail === "string") {
-          errorMessage = data.detail;
-        }
-
-
-        setMessage(errorMessage);
-        return;
-      }
-
-
-      setMessage(
-        "Account created successfully! Redirecting..."
-      );
-
+      setMessage("Account created successfully! Redirecting...");
 
       setTimeout(() => {
         router.push("/login");
       }, 1500);
 
-
-    } catch (error) {
-
-      setMessage(
-        "Cannot connect to backend server"
-      );
-
-
+    } catch (error: any) {
+      setMessage(error.message || "Registration failed");
     } finally {
-
       setLoading(false);
-
     }
   }
 
-
-
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-950 text-white">
-
       <form
         onSubmit={handleRegister}
         className="w-full max-w-md rounded-xl bg-slate-900 p-8 shadow-xl"
       >
-
         <h1 className="mb-6 text-center text-3xl font-bold">
           Create NdarilaAI Account
         </h1>
 
-
         {/* Username */}
-
         <input
           type="text"
           placeholder="Username"
@@ -109,9 +56,7 @@ export default function RegisterPage() {
           required
         />
 
-
         {/* Email */}
-
         <input
           type="email"
           placeholder="Email"
@@ -121,9 +66,7 @@ export default function RegisterPage() {
           required
         />
 
-
         {/* Password */}
-
         <input
           type="password"
           placeholder="Password"
@@ -134,7 +77,6 @@ export default function RegisterPage() {
           minLength={6}
         />
 
-
         <button
           type="submit"
           disabled={loading}
@@ -142,7 +84,6 @@ export default function RegisterPage() {
         >
           {loading ? "Creating Account..." : "Register"}
         </button>
-
 
         {message && (
           <p
@@ -155,9 +96,7 @@ export default function RegisterPage() {
             {message}
           </p>
         )}
-
       </form>
-
     </div>
   );
 }
